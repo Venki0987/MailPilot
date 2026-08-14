@@ -1,0 +1,518 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailPilot - Complete Architecture & Why Strands</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #FAFBFC; color: #1E293B; padding: 48px 32px; line-height: 1.7; }
+        .page { max-width: 1200px; margin: 0 auto; }
+
+        .title-bar { text-align: center; margin-bottom: 56px; }
+        .title-bar h1 { font-size: 34px; font-weight: 900; }
+        .title-bar h1 span { color: #E20031; }
+        .title-bar p { font-size: 14px; color: #64748B; margin-top: 6px; }
+        .title-bar .tags { margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .title-bar .tag { font-size: 10px; font-weight: 700; padding: 4px 12px; border-radius: 12px; background: #0F172A; color: white; }
+
+        /* Layers */
+        .layer { background: white; border: 2px solid #E2E8F0; border-radius: 16px; padding: 28px 32px; position: relative; }
+        .layer-label { position: absolute; top: -13px; left: 28px; background: white; padding: 0 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
+        .layer-label.red { color: #E20031; }
+        .layer-label.blue { color: #2563EB; }
+        .layer-label.purple { color: #7C3AED; }
+        .layer-label.green { color: #059669; }
+        .layer-label.amber { color: #D97706; }
+        .layer-label.dark { color: #0F172A; }
+
+        .connector { display: flex; justify-content: center; padding: 6px 0; }
+        .arrow-down { width: 2px; height: 28px; background: linear-gradient(to bottom, #CBD5E1, #E20031); position: relative; }
+        .arrow-down::after { content: 'â–¼'; position: absolute; bottom: -11px; left: 50%; transform: translateX(-50%); color: #E20031; font-size: 11px; }
+        .flow-label { text-align: center; font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; padding: 2px 0 6px; }
+
+        .boxes { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .box { padding: 12px 16px; border-radius: 10px; font-size: 12px; font-weight: 600; text-align: center; border: 1.5px solid; min-width: 120px; transition: transform 0.2s; }
+        .box:hover { transform: translateY(-2px); }
+        .box .sub { font-size: 10px; font-weight: 400; color: #64748B; margin-top: 3px; display: block; }
+        .box-red { background: #FEF2F2; border-color: #FECACA; color: #DC2626; }
+        .box-blue { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
+        .box-purple { background: #F5F3FF; border-color: #DDD6FE; color: #6D28D9; }
+        .box-green { background: #ECFDF5; border-color: #A7F3D0; color: #047857; }
+        .box-amber { background: #FFFBEB; border-color: #FDE68A; color: #92400E; }
+        .box-dark { background: #0F172A; border-color: #334155; color: #F8FAFC; }
+        .box-gray { background: #F1F5F9; border-color: #CBD5E1; color: #334155; }
+
+        .tech-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+        .tech-tag { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 12px; background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+
+        /* Sections */
+        .section { margin-top: 64px; }
+        .section-title { font-size: 22px; font-weight: 800; margin-bottom: 24px; padding-bottom: 8px; border-bottom: 3px solid #E20031; display: inline-block; }
+
+        /* Comparison Table */
+        .comparison { width: 100%; border-collapse: collapse; margin-top: 20px; border-radius: 12px; overflow: hidden; border: 1px solid #E2E8F0; }
+        .comparison th { background: #0F172A; color: white; padding: 14px 18px; text-align: left; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .comparison td { padding: 14px 18px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
+        .comparison tr:last-child td { border-bottom: none; }
+        .comparison tr:hover td { background: #F8FAFC; }
+        .comparison .highlight { background: #ECFDF5; }
+        .comparison .winner { color: #059669; font-weight: 700; }
+        .comparison .loser { color: #94A3B8; }
+
+        /* Code Comparison */
+        .code-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .code-block { background: #0F172A; border-radius: 12px; padding: 20px 24px; overflow-x: auto; }
+        .code-block h4 { color: #94A3B8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .code-block pre { color: #E2E8F0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 11.5px; line-height: 1.7; white-space: pre-wrap; }
+        .code-block .keyword { color: #7DD3FC; }
+        .code-block .string { color: #86EFAC; }
+        .code-block .comment { color: #475569; }
+        .code-block .func { color: #FDE68A; }
+
+        /* Stats */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; }
+        .stat-box { background: white; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 20px; text-align: center; }
+        .stat-box .num { font-size: 32px; font-weight: 900; color: #E20031; }
+        .stat-box .label { font-size: 11px; color: #64748B; font-weight: 600; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
+
+        /* Agent Flow */
+        .v-steps { display: flex; flex-direction: column; gap: 0; align-items: center; }
+        .v-step { padding: 10px 24px; border-radius: 8px; font-size: 11px; font-weight: 600; text-align: center; border: 1.5px solid; width: 300px; }
+        .v-step .detail { font-size: 10px; font-weight: 400; color: #64748B; margin-top: 2px; }
+        .v-arrow { color: #CBD5E1; font-size: 14px; padding: 4px 0; }
+        .decision { background: #FFFBEB; border-color: #FDE68A; color: #92400E; font-style: italic; }
+        .decision::before { content: 'â—† '; }
+
+        .flow-diagram { background: white; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 32px; margin-bottom: 24px; }
+        .flow-diagram h3 { font-size: 15px; font-weight: 700; margin-bottom: 20px; }
+        .flow-diagram h3 .num { display: inline-block; width: 26px; height: 26px; background: #E20031; color: white; border-radius: 50%; text-align: center; line-height: 26px; font-size: 12px; margin-right: 10px; }
+
+        /* Prose */
+        .prose { font-size: 14px; color: #475569; line-height: 1.8; }
+        .prose strong { color: #1E293B; }
+        .prose ul { margin: 12px 0; padding-left: 20px; }
+        .prose li { margin-bottom: 6px; }
+
+        .footer { text-align: center; padding: 40px 0; border-top: 1px solid #E2E8F0; margin-top: 60px; color: #94A3B8; font-size: 12px; }
+
+        @media (max-width: 768px) {
+            .code-compare { grid-template-columns: 1fr; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- TITLE -->
+    <div class="title-bar">
+        <h1><span>MailPilot</span> â€” Architecture & Why Strands</h1>
+        <p>the organization â€¢ Multi-Agent AI Email Intelligence Platform</p>
+        <div class="tags">
+            <span class="tag">Strands Agents SDK</span>
+            <span class="tag">FastAPI</span>
+            <span class="tag">Claude Sonnet</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">Python 3.11</span>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SYSTEM ARCHITECTURE -->
+    <!-- ============================================================ -->
+
+    <div class="layer">
+        <div class="layer-label red">1. Frontend â€” Tailwind + JS + FastAPI</div>
+        <div class="boxes">
+            <div class="box box-red">Dashboard<span class="sub">KPIs, Search, Themes</span></div>
+            <div class="box box-red">Email Cards<span class="sub">Priority, Actions</span></div>
+            <div class="box box-red">AI Copilot<span class="sub">Chat Q&A Panel</span></div>
+            <div class="box box-red">Analytics<span class="sub">Stats & Patterns</span></div>
+            <div class="box box-red">Briefing<span class="sub">Executive Digest</span></div>
+        </div>
+        <div class="tech-row">
+            <span class="tech-tag">Tailwind CSS</span>
+            <span class="tech-tag">Jinja2</span>
+            <span class="tech-tag">JavaScript SPA</span>
+            <span class="tech-tag">Lucide Icons</span>
+            <span class="tech-tag">8 Color Themes</span>
+        </div>
+    </div>
+
+    <div class="connector"><div class="arrow-down"></div></div>
+    <div class="flow-label">HTTP / JSON API</div>
+
+    <div class="layer">
+        <div class="layer-label blue">2. API Layer â€” FastAPI + Uvicorn</div>
+        <div class="boxes">
+            <div class="box box-blue">GET /api/stats</div>
+            <div class="box box-blue">GET /api/emails</div>
+            <div class="box box-blue">POST /api/chat</div>
+            <div class="box box-blue">GET /api/health</div>
+        </div>
+        <div class="tech-row">
+            <span class="tech-tag">FastAPI</span>
+            <span class="tech-tag">Uvicorn ASGI</span>
+            <span class="tech-tag">Pydantic</span>
+        </div>
+    </div>
+
+    <div class="connector"><div class="arrow-down"></div></div>
+    <div class="flow-label">Orchestrator dispatches to Agents</div>
+
+    <div class="layer">
+        <div class="layer-label purple">3. AI Agent Layer â€” Strands Agents SDK</div>
+        <div class="boxes">
+            <div class="box box-purple">GuardianAI<span class="sub">Agent 1: Spam Filter<br>7-Category Classification</span></div>
+            <div class="box box-purple">ActionMiner<span class="sub">Agent 2: Extractor<br>Tasks, Deadlines, Priority</span></div>
+            <div class="box box-purple">BriefBot<span class="sub">Agent 3: Briefing<br>Daily Executive Digest</span></div>
+            <div class="box box-purple">CoPilot<span class="sub">Agent 4: Chat Q&A<br>Email Explainer</span></div>
+        </div>
+        <div class="tech-row">
+            <span class="tech-tag">Strands Agent()</span>
+            <span class="tech-tag">@tool decorator</span>
+            <span class="tech-tag">System Prompts</span>
+            <span class="tech-tag">Tool Calling</span>
+            <span class="tech-tag">JSON Parsing</span>
+        </div>
+    </div>
+
+    <div class="connector"><div class="arrow-down"></div></div>
+    <div class="flow-label">LLM calls via OpenAI-compatible API</div>
+
+    <div class="layer">
+        <div class="layer-label dark">4. LLM â€” Amazon Bedrock (Claude Sonnet)</div>
+        <div class="boxes">
+            <div class="box box-dark">Claude Sonnet</div>
+            <div class="box box-gray">API Gateway Proxy</div>
+            <div class="box box-gray">/chat/completions</div>
+        </div>
+        <div class="tech-row">
+            <span class="tech-tag">Amazon Bedrock</span>
+            <span class="tech-tag">OpenAI Protocol</span>
+            <span class="tech-tag">Temp: 0.3</span>
+            <span class="tech-tag">Max: 4096 tokens</span>
+        </div>
+    </div>
+
+    <div class="connector"><div class="arrow-down"></div></div>
+    <div class="flow-label">Read/Write persistent data</div>
+
+    <div class="layer">
+        <div class="layer-label green">5. Backend â€” Storage, Scheduling, Orchestration</div>
+        <div class="boxes">
+            <div class="box box-green">SQLite DB<span class="sub">Email Intelligence</span></div>
+            <div class="box box-green">Orchestrator<span class="sub">Pipeline + Retry</span></div>
+            <div class="box box-green">Scheduler<span class="sub">5-min poll + Cron</span></div>
+            <div class="box box-green">Repository<span class="sub">Data Access Layer</span></div>
+        </div>
+        <div class="tech-row">
+            <span class="tech-tag">SQLAlchemy</span>
+            <span class="tech-tag">APScheduler</span>
+            <span class="tech-tag">Tenacity</span>
+            <span class="tech-tag">Structlog</span>
+        </div>
+    </div>
+
+    <div class="connector"><div class="arrow-down"></div></div>
+    <div class="flow-label">OAuth2 / REST APIs</div>
+
+    <div class="layer">
+        <div class="layer-label amber">6. Integrations â€” Email Providers + Delivery</div>
+        <div class="boxes">
+            <div class="box box-amber">Gmail API<span class="sub">OAuth2</span></div>
+            <div class="box box-amber">Outlook<span class="sub">Graph API</span></div>
+            <div class="box box-amber">Slack<span class="sub">Webhook</span></div>
+            <div class="box box-amber">Teams<span class="sub">Webhook</span></div>
+            <div class="box box-amber">SMTP<span class="sub">Email Delivery</span></div>
+        </div>
+        <div class="tech-row">
+            <span class="tech-tag">google-api-client</span>
+            <span class="tech-tag">MSAL</span>
+            <span class="tech-tag">HTTPX</span>
+            <span class="tech-tag">smtplib</span>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- INTERNAL AGENT FLOWS -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <div class="section-title">Internal Agent Flows</div>
+
+        <div class="flow-diagram">
+            <h3><span class="num">1</span>GuardianAI â€” Email Classification</h3>
+            <div class="v-steps">
+                <div class="v-step box-blue">Receive raw email<div class="detail">sender, subject, body, metadata</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-green">Check VIP list<div class="detail">Match sender against VIP contacts</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-purple">Send to Claude Sonnet with system prompt<div class="detail">7 categories + confidence scoring rules</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-purple">LLM calls classify_email @tool<div class="detail">Returns: classification, confidence, reasoning</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step decision">VIP override?<div class="detail">VIP senders always elevated to IMPORTANT</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-blue">Return ClassificationResult</div>
+            </div>
+        </div>
+
+        <div class="flow-diagram">
+            <h3><span class="num">2</span>ActionMiner â€” Task Extraction</h3>
+            <div class="v-steps">
+                <div class="v-step box-blue">Receive IMPORTANT email only</div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-purple">Send to Claude with extraction rules<div class="detail">"Never invent tasks" + 12 structured fields</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-purple">LLM calls extract_action_items @tool<div class="detail">summary, tasks[], deadlines[], questions[], priority</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-green">Parse nested JSON response<div class="detail">Handle strings, lists, objects gracefully</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-blue">Return ActionItem model</div>
+            </div>
+        </div>
+
+        <div class="flow-diagram">
+            <h3><span class="num">3</span>BriefBot â€” Daily Briefing</h3>
+            <div class="v-steps">
+                <div class="v-step box-green">Query DB: last 24h IMPORTANT emails</div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-blue">Aggregate stats + build email summaries</div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-purple">Send to Claude with executive format rules<div class="detail">"Remove duplicates, prioritize by urgency"</div></div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-purple">LLM calls generate_briefing @tool</div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-amber">Deliver via Email + Slack + Teams</div>
+            </div>
+        </div>
+
+        <div class="flow-diagram">
+            <h3><span class="num">4</span>CoPilot â€” Chat Q&A</h3>
+            <div class="v-steps">
+                <div class="v-step box-red">User asks question in chat panel</div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-green">Fetch last 72h emails as context (max 30)</div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-purple">Send [system + email context + user question] to Claude</div>
+                <div class="v-arrow">â–¼</div>
+                <div class="v-step box-red">Display response in chat bubble</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- WHY STRANDS vs LANGGRAPH -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <div class="section-title">Why Strands Agents SDK (Not LangGraph)</div>
+
+        <div class="prose" style="margin-bottom: 30px;">
+            <p><strong>The core argument:</strong> Strands takes a model-driven approach â€” you give the agent a prompt, a model, and tools. The LLM decides what to do. LangGraph takes a graph-driven approach â€” you define nodes, edges, and state transitions manually. For this project, Strands was the clear winner.</p>
+        </div>
+
+        <!-- Line count comparison -->
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="num">~15</div>
+                <div class="label">Lines to define an agent (Strands)</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">~80</div>
+                <div class="label">Lines for same agent (LangGraph)</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">3</div>
+                <div class="label">Core concepts (Strands)</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">8+</div>
+                <div class="label">Core concepts (LangGraph)</div>
+            </div>
+        </div>
+
+        <!-- Side by side code -->
+        <div class="code-compare">
+            <div class="code-block">
+                <h4>Strands â€” Creating an Agent (Our Code)</h4>
+<pre><span class="comment"># That's it. The entire agent definition.</span>
+
+<span class="keyword">from</span> strands <span class="keyword">import</span> Agent, tool
+
+<span class="keyword">@tool</span>
+<span class="keyword">def</span> <span class="func">classify_email</span>(classification, confidence, reasoning):
+    <span class="string">"""Classify the email."""</span>
+    <span class="keyword">return</span> json.dumps({...})
+
+agent = Agent(
+    model=model,
+    system_prompt=SYSTEM_PROMPT,
+    tools=[classify_email],
+)
+
+result = agent(<span class="string">"Classify this email..."</span>)</pre>
+            </div>
+            <div class="code-block">
+                <h4>LangGraph â€” Same Agent Would Require</h4>
+<pre><span class="comment"># Much more boilerplate and ceremony</span>
+
+<span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph, END
+<span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> ...
+<span class="keyword">from</span> langchain_core.tools <span class="keyword">import</span> tool
+<span class="keyword">from</span> langchain_anthropic <span class="keyword">import</span> ChatAnthropic
+
+<span class="comment"># 1. Define state schema</span>
+<span class="keyword">class</span> <span class="func">AgentState</span>(TypedDict):
+    messages: list
+    classification: str
+    ...
+
+<span class="comment"># 2. Define tool</span>
+<span class="keyword">@tool</span>
+<span class="keyword">def</span> <span class="func">classify_email</span>(...):
+    ...
+
+<span class="comment"># 3. Define node functions</span>
+<span class="keyword">def</span> <span class="func">call_model</span>(state):
+    ...
+<span class="keyword">def</span> <span class="func">should_continue</span>(state):
+    ...
+<span class="keyword">def</span> <span class="func">call_tool</span>(state):
+    ...
+
+<span class="comment"># 4. Build graph</span>
+workflow = StateGraph(AgentState)
+workflow.add_node(<span class="string">"agent"</span>, call_model)
+workflow.add_node(<span class="string">"tools"</span>, call_tool)
+workflow.set_entry_point(<span class="string">"agent"</span>)
+workflow.add_conditional_edges(...)
+workflow.add_edge(<span class="string">"tools"</span>, <span class="string">"agent"</span>)
+
+<span class="comment"># 5. Compile and invoke</span>
+app = workflow.compile()
+result = app.invoke({<span class="string">"messages"</span>: [...]})</pre>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <table class="comparison" style="margin-top: 32px;">
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Strands Agents SDK</th>
+                    <th>LangGraph</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="highlight">
+                    <td><strong>Lines of code per agent</strong></td>
+                    <td class="winner">~15-20 lines</td>
+                    <td class="loser">~60-100 lines</td>
+                </tr>
+                <tr>
+                    <td><strong>Agent creation</strong></td>
+                    <td class="winner">Agent(model, prompt, tools) â€” done</td>
+                    <td class="loser">StateGraph + nodes + edges + compile</td>
+                </tr>
+                <tr class="highlight">
+                    <td><strong>Tool definition</strong></td>
+                    <td class="winner">@tool decorator with docstring</td>
+                    <td class="loser">@tool + schema + binding to LLM</td>
+                </tr>
+                <tr>
+                    <td><strong>Control flow</strong></td>
+                    <td>LLM decides (model-driven)</td>
+                    <td>Developer defines graph (manual)</td>
+                </tr>
+                <tr class="highlight">
+                    <td><strong>Multi-agent</strong></td>
+                    <td class="winner">Just call one agent from another</td>
+                    <td class="loser">Subgraphs, state passing, edge routing</td>
+                </tr>
+                <tr>
+                    <td><strong>Concepts to learn</strong></td>
+                    <td class="winner">Agent, Tool, Model (3 things)</td>
+                    <td class="loser">State, Node, Edge, Conditional, Checkpoint, Channel, Reducer, Compile (8+)</td>
+                </tr>
+                <tr class="highlight">
+                    <td><strong>Error handling</strong></td>
+                    <td class="winner">Standard try/except, tenacity retry</td>
+                    <td class="loser">State-based error nodes, custom reducers</td>
+                </tr>
+                <tr>
+                    <td><strong>Model provider</strong></td>
+                    <td class="winner">OpenAIModel(base_url=...) â€” any endpoint</td>
+                    <td class="loser">Need langchain_openai or langchain_anthropic wrapper</td>
+                </tr>
+                <tr class="highlight">
+                    <td><strong>Dependencies</strong></td>
+                    <td class="winner">1 package: strands-agents</td>
+                    <td class="loser">langgraph + langchain-core + langchain-anthropic + ...</td>
+                </tr>
+                <tr>
+                    <td><strong>When to use</strong></td>
+                    <td>Most real-world agent apps (80% of use cases)</td>
+                    <td>Complex cyclic workflows, human-in-the-loop</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="prose" style="margin-top: 32px;">
+            <strong>Key advantages of Strands for MailPilot:</strong>
+            <ul>
+                <li><strong>80% less boilerplate</strong> â€” Each agent is literally: model + prompt + tools. No graph definition, no state schema, no edge routing.</li>
+                <li><strong>Model-driven approach</strong> â€” The LLM decides when to call tools and what to do next. We don't manually code the logic flow â€” the AI handles it.</li>
+                <li><strong>Direct tool calling</strong> â€” The @tool decorator auto-generates the JSON schema from the function signature and docstring. LangGraph needs manual schema definition or Pydantic models.</li>
+                <li><strong>Simple multi-agent</strong> â€” Our orchestrator just calls classify(email), then extract(email), then briefing(). No subgraph nesting, no state channel merging.</li>
+                <li><strong>One dependency</strong> â€” strands-agents includes everything (model providers, tools, agent loop). LangGraph requires 4-5 separate packages.</li>
+                <li><strong>OpenAI-compatible endpoint</strong> â€” We just pass base_url and it works with any endpoint. No provider-specific wrappers needed.</li>
+                <li><strong>Production-ready out of the box</strong> â€” Built-in observability (OpenTelemetry), streaming, retry, and tool execution. LangGraph needs LangSmith, custom callbacks, etc.</li>
+            </ul>
+        </div>
+
+        <div class="prose" style="margin-top: 24px;">
+            <strong>When would LangGraph be better?</strong>
+            <ul>
+                <li>Complex cyclic workflows where agents loop back to each other based on conditions</li>
+                <li>Human-in-the-loop approval steps with state persistence</li>
+                <li>Long-running workflows that need checkpoint/resume</li>
+                <li>When you need explicit control over every decision branch</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>For MailPilot:</strong> Our pipeline is linear (classify â†’ extract â†’ store â†’ brief). Strands' simplicity is a perfect fit. We'd be fighting LangGraph's complexity for no benefit.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PROJECT STATS -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <div class="section-title">Project Statistics</div>
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="num">4</div>
+                <div class="label">AI Agents</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">~2,500</div>
+                <div class="label">Lines of Python</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">5</div>
+                <div class="label">API Endpoints</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">8</div>
+                <div class="label">Color Themes</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>MailPilot</strong> â€” the organization AI Innovation</p>
+        <p style="margin-top: 4px;">Strands Agents SDK â€¢ FastAPI â€¢ Claude Sonnet â€¢ Tailwind CSS</p>
+    </div>
+</div>
+</body>
+</html>
