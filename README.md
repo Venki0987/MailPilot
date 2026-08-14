@@ -184,9 +184,6 @@ pip install -e ".[dev]"
 pytest -v
 ```
 
-## License
-
-MIT
 
 ## Author
 
