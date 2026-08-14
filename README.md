@@ -1,45 +1,45 @@
-﻿# ðŸ“¬ Smart Inbox Gatekeeper & Action-Item Extractor
+# 📬 Smart Inbox Gatekeeper & Action-Item Extractor
 
 A production-ready multi-agent AI system built with the [Strands Agents SDK](https://strandsagents.com/) that monitors Gmail and Microsoft Outlook, filters inbox noise, extracts actionable tasks, and delivers a concise daily executive briefing.
 
 ## Architecture
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚   Gmail     â”‚     â”‚   Outlook   â”‚
-â”‚   OAuth2    â”‚     â”‚  Graph API  â”‚
-â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
-       â”‚                   â”‚
-       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                 â”‚
-        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”
-        â”‚   Orchestrator  â”‚
-        â”‚   (Scheduler)   â”‚
-        â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                 â”‚
-    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-    â”‚  Agent 1: Spam Filter   â”‚
-    â”‚  (Classification)       â”‚
-    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                 â”‚ IMPORTANT only
-    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-    â”‚  Agent 2: Action-Item   â”‚
-    â”‚  Extractor              â”‚
-    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                 â”‚
-    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-    â”‚     SQLite Storage      â”‚
-    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                 â”‚ Daily (cron)
-    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-    â”‚  Agent 3: Briefing      â”‚
-    â”‚  Executive              â”‚
-    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                 â”‚
-    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-    â”‚  Delivery: Email/Slack  â”‚
-    â”‚  /Teams                 â”‚
-    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+┌─────────────┐     ┌─────────────┐
+│   Gmail     │     │   Outlook   │
+│   OAuth2    │     │  Graph API  │
+└──────┬──────┘     └──────┬──────┘
+       │                   │
+       └─────────┬─────────┘
+                 │
+        ┌────────▼────────┐
+        │   Orchestrator  │
+        │   (Scheduler)   │
+        └────────┬────────┘
+                 │
+    ┌────────────▼────────────┐
+    │  Agent 1: Spam Filter   │
+    │  (Classification)       │
+    └────────────┬────────────┘
+                 │ IMPORTANT only
+    ┌────────────▼────────────┐
+    │  Agent 2: Action-Item   │
+    │  Extractor              │
+    └────────────┬────────────┘
+                 │
+    ┌────────────▼────────────┐
+    │     SQLite Storage      │
+    └────────────┬────────────┘
+                 │ Daily (cron)
+    ┌────────────▼────────────┐
+    │  Agent 3: Briefing      │
+    │  Executive              │
+    └────────────┬────────────┘
+                 │
+    ┌────────────▼────────────┐
+    │  Delivery: Email/Slack  │
+    │  /Teams                 │
+    └─────────────────────────┘
 ```
 
 ## Features
@@ -133,32 +133,32 @@ Generates a daily digest with:
 ## Project Structure
 
 ```
-â”œâ”€â”€ main.py                    # Application entry point
-â”œâ”€â”€ pyproject.toml             # Dependencies and project config
-â”œâ”€â”€ Dockerfile                 # Production container
-â”œâ”€â”€ docker-compose.yml         # Container orchestration
-â”œâ”€â”€ .env.example               # Configuration template
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ config.py              # Settings management
-â”‚   â”œâ”€â”€ models.py              # Pydantic data models
-â”‚   â”œâ”€â”€ orchestrator.py        # Pipeline coordination
-â”‚   â”œâ”€â”€ scheduler.py           # Job scheduling (APScheduler)
-â”‚   â”œâ”€â”€ logging_config.py      # Structured logging setup
-â”‚   â”œâ”€â”€ agents/
-â”‚   â”‚   â”œâ”€â”€ spam_filter.py     # Agent 1: Classification
-â”‚   â”‚   â”œâ”€â”€ action_extractor.py # Agent 2: Extraction
-â”‚   â”‚   â””â”€â”€ briefing_executive.py # Agent 3: Briefing
-â”‚   â”œâ”€â”€ database/
-â”‚   â”‚   â”œâ”€â”€ schema.py          # SQLAlchemy ORM models
-â”‚   â”‚   â””â”€â”€ repository.py     # Data access layer
-â”‚   â””â”€â”€ integrations/
-â”‚       â”œâ”€â”€ gmail_client.py    # Gmail API client
-â”‚       â”œâ”€â”€ outlook_client.py  # Microsoft Graph client
-â”‚       â””â”€â”€ notifications.py   # Email/Slack/Teams delivery
-â””â”€â”€ tests/
-    â”œâ”€â”€ test_models.py         # Model validation tests
-    â”œâ”€â”€ test_repository.py     # Database layer tests
-    â””â”€â”€ test_orchestrator.py   # Pipeline integration tests
+├── main.py                    # Application entry point
+├── pyproject.toml             # Dependencies and project config
+├── Dockerfile                 # Production container
+├── docker-compose.yml         # Container orchestration
+├── .env.example               # Configuration template
+├── src/
+│   ├── config.py              # Settings management
+│   ├── models.py              # Pydantic data models
+│   ├── orchestrator.py        # Pipeline coordination
+│   ├── scheduler.py           # Job scheduling (APScheduler)
+│   ├── logging_config.py      # Structured logging setup
+│   ├── agents/
+│   │   ├── spam_filter.py     # Agent 1: Classification
+│   │   ├── action_extractor.py # Agent 2: Extraction
+│   │   └── briefing_executive.py # Agent 3: Briefing
+│   ├── database/
+│   │   ├── schema.py          # SQLAlchemy ORM models
+│   │   └── repository.py     # Data access layer
+│   └── integrations/
+│       ├── gmail_client.py    # Gmail API client
+│       ├── outlook_client.py  # Microsoft Graph client
+│       └── notifications.py   # Email/Slack/Teams delivery
+└── tests/
+    ├── test_models.py         # Model validation tests
+    ├── test_repository.py     # Database layer tests
+    └── test_orchestrator.py   # Pipeline integration tests
 ```
 
 ## Configuration Reference
