@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -29,7 +29,7 @@
 
         .connector { display: flex; justify-content: center; padding: 6px 0; }
         .arrow-down { width: 2px; height: 28px; background: linear-gradient(to bottom, #CBD5E1, #E20031); position: relative; }
-        .arrow-down::after { content: 'â–¼'; position: absolute; bottom: -11px; left: 50%; transform: translateX(-50%); color: #E20031; font-size: 11px; }
+        .arrow-down::after { content: '▼'; position: absolute; bottom: -11px; left: 50%; transform: translateX(-50%); color: #E20031; font-size: 11px; }
         .flow-label { text-align: center; font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; padding: 2px 0 6px; }
 
         .boxes { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
@@ -83,7 +83,7 @@
         .v-step .detail { font-size: 10px; font-weight: 400; color: #64748B; margin-top: 2px; }
         .v-arrow { color: #CBD5E1; font-size: 14px; padding: 4px 0; }
         .decision { background: #FFFBEB; border-color: #FDE68A; color: #92400E; font-style: italic; }
-        .decision::before { content: 'â—† '; }
+        .decision::before { content: '◆ '; }
 
         .flow-diagram { background: white; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 32px; margin-bottom: 24px; }
         .flow-diagram h3 { font-size: 15px; font-weight: 700; margin-bottom: 20px; }
@@ -108,8 +108,8 @@
 
     <!-- TITLE -->
     <div class="title-bar">
-        <h1><span>MailPilot</span> â€” Architecture & Why Strands</h1>
-        <p>the organization â€¢ Multi-Agent AI Email Intelligence Platform</p>
+        <h1><span>MailPilot</span> — Architecture & Why Strands</h1>
+        <p>the organization • Multi-Agent AI Email Intelligence Platform</p>
         <div class="tags">
             <span class="tag">Strands Agents SDK</span>
             <span class="tag">FastAPI</span>
@@ -124,7 +124,7 @@
     <!-- ============================================================ -->
 
     <div class="layer">
-        <div class="layer-label red">1. Frontend â€” Tailwind + JS + FastAPI</div>
+        <div class="layer-label red">1. Frontend — Tailwind + JS + FastAPI</div>
         <div class="boxes">
             <div class="box box-red">Dashboard<span class="sub">KPIs, Search, Themes</span></div>
             <div class="box box-red">Email Cards<span class="sub">Priority, Actions</span></div>
@@ -145,7 +145,7 @@
     <div class="flow-label">HTTP / JSON API</div>
 
     <div class="layer">
-        <div class="layer-label blue">2. API Layer â€” FastAPI + Uvicorn</div>
+        <div class="layer-label blue">2. API Layer — FastAPI + Uvicorn</div>
         <div class="boxes">
             <div class="box box-blue">GET /api/stats</div>
             <div class="box box-blue">GET /api/emails</div>
@@ -163,7 +163,7 @@
     <div class="flow-label">Orchestrator dispatches to Agents</div>
 
     <div class="layer">
-        <div class="layer-label purple">3. AI Agent Layer â€” Strands Agents SDK</div>
+        <div class="layer-label purple">3. AI Agent Layer — Strands Agents SDK</div>
         <div class="boxes">
             <div class="box box-purple">GuardianAI<span class="sub">Agent 1: Spam Filter<br>7-Category Classification</span></div>
             <div class="box box-purple">ActionMiner<span class="sub">Agent 2: Extractor<br>Tasks, Deadlines, Priority</span></div>
@@ -183,7 +183,7 @@
     <div class="flow-label">LLM calls via OpenAI-compatible API</div>
 
     <div class="layer">
-        <div class="layer-label dark">4. LLM â€” Amazon Bedrock (Claude Sonnet)</div>
+        <div class="layer-label dark">4. LLM — Amazon Bedrock (Claude Sonnet)</div>
         <div class="boxes">
             <div class="box box-dark">Claude Sonnet</div>
             <div class="box box-gray">API Gateway Proxy</div>
@@ -201,7 +201,7 @@
     <div class="flow-label">Read/Write persistent data</div>
 
     <div class="layer">
-        <div class="layer-label green">5. Backend â€” Storage, Scheduling, Orchestration</div>
+        <div class="layer-label green">5. Backend — Storage, Scheduling, Orchestration</div>
         <div class="boxes">
             <div class="box box-green">SQLite DB<span class="sub">Email Intelligence</span></div>
             <div class="box box-green">Orchestrator<span class="sub">Pipeline + Retry</span></div>
@@ -220,7 +220,7 @@
     <div class="flow-label">OAuth2 / REST APIs</div>
 
     <div class="layer">
-        <div class="layer-label amber">6. Integrations â€” Email Providers + Delivery</div>
+        <div class="layer-label amber">6. Integrations — Email Providers + Delivery</div>
         <div class="boxes">
             <div class="box box-amber">Gmail API<span class="sub">OAuth2</span></div>
             <div class="box box-amber">Outlook<span class="sub">Graph API</span></div>
@@ -243,61 +243,61 @@
         <div class="section-title">Internal Agent Flows</div>
 
         <div class="flow-diagram">
-            <h3><span class="num">1</span>GuardianAI â€” Email Classification</h3>
+            <h3><span class="num">1</span>GuardianAI — Email Classification</h3>
             <div class="v-steps">
                 <div class="v-step box-blue">Receive raw email<div class="detail">sender, subject, body, metadata</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-green">Check VIP list<div class="detail">Match sender against VIP contacts</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-purple">Send to Claude Sonnet with system prompt<div class="detail">7 categories + confidence scoring rules</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-purple">LLM calls classify_email @tool<div class="detail">Returns: classification, confidence, reasoning</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step decision">VIP override?<div class="detail">VIP senders always elevated to IMPORTANT</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-blue">Return ClassificationResult</div>
             </div>
         </div>
 
         <div class="flow-diagram">
-            <h3><span class="num">2</span>ActionMiner â€” Task Extraction</h3>
+            <h3><span class="num">2</span>ActionMiner — Task Extraction</h3>
             <div class="v-steps">
                 <div class="v-step box-blue">Receive IMPORTANT email only</div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-purple">Send to Claude with extraction rules<div class="detail">"Never invent tasks" + 12 structured fields</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-purple">LLM calls extract_action_items @tool<div class="detail">summary, tasks[], deadlines[], questions[], priority</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-green">Parse nested JSON response<div class="detail">Handle strings, lists, objects gracefully</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-blue">Return ActionItem model</div>
             </div>
         </div>
 
         <div class="flow-diagram">
-            <h3><span class="num">3</span>BriefBot â€” Daily Briefing</h3>
+            <h3><span class="num">3</span>BriefBot — Daily Briefing</h3>
             <div class="v-steps">
                 <div class="v-step box-green">Query DB: last 24h IMPORTANT emails</div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-blue">Aggregate stats + build email summaries</div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-purple">Send to Claude with executive format rules<div class="detail">"Remove duplicates, prioritize by urgency"</div></div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-purple">LLM calls generate_briefing @tool</div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-amber">Deliver via Email + Slack + Teams</div>
             </div>
         </div>
 
         <div class="flow-diagram">
-            <h3><span class="num">4</span>CoPilot â€” Chat Q&A</h3>
+            <h3><span class="num">4</span>CoPilot — Chat Q&A</h3>
             <div class="v-steps">
                 <div class="v-step box-red">User asks question in chat panel</div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-green">Fetch last 72h emails as context (max 30)</div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-purple">Send [system + email context + user question] to Claude</div>
-                <div class="v-arrow">â–¼</div>
+                <div class="v-arrow">▼</div>
                 <div class="v-step box-red">Display response in chat bubble</div>
             </div>
         </div>
@@ -310,7 +310,7 @@
         <div class="section-title">Why Strands Agents SDK (Not LangGraph)</div>
 
         <div class="prose" style="margin-bottom: 30px;">
-            <p><strong>The core argument:</strong> Strands takes a model-driven approach â€” you give the agent a prompt, a model, and tools. The LLM decides what to do. LangGraph takes a graph-driven approach â€” you define nodes, edges, and state transitions manually. For this project, Strands was the clear winner.</p>
+            <p><strong>The core argument:</strong> Strands takes a model-driven approach — you give the agent a prompt, a model, and tools. The LLM decides what to do. LangGraph takes a graph-driven approach — you define nodes, edges, and state transitions manually. For this project, Strands was the clear winner.</p>
         </div>
 
         <!-- Line count comparison -->
@@ -336,7 +336,7 @@
         <!-- Side by side code -->
         <div class="code-compare">
             <div class="code-block">
-                <h4>Strands â€” Creating an Agent (Our Code)</h4>
+                <h4>Strands — Creating an Agent (Our Code)</h4>
 <pre><span class="comment"># That's it. The entire agent definition.</span>
 
 <span class="keyword">from</span> strands <span class="keyword">import</span> Agent, tool
@@ -355,7 +355,7 @@ agent = Agent(
 result = agent(<span class="string">"Classify this email..."</span>)</pre>
             </div>
             <div class="code-block">
-                <h4>LangGraph â€” Same Agent Would Require</h4>
+                <h4>LangGraph — Same Agent Would Require</h4>
 <pre><span class="comment"># Much more boilerplate and ceremony</span>
 
 <span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph, END
@@ -413,7 +413,7 @@ result = app.invoke({<span class="string">"messages"</span>: [...]})</pre>
                 </tr>
                 <tr>
                     <td><strong>Agent creation</strong></td>
-                    <td class="winner">Agent(model, prompt, tools) â€” done</td>
+                    <td class="winner">Agent(model, prompt, tools) — done</td>
                     <td class="loser">StateGraph + nodes + edges + compile</td>
                 </tr>
                 <tr class="highlight">
@@ -443,7 +443,7 @@ result = app.invoke({<span class="string">"messages"</span>: [...]})</pre>
                 </tr>
                 <tr>
                     <td><strong>Model provider</strong></td>
-                    <td class="winner">OpenAIModel(base_url=...) â€” any endpoint</td>
+                    <td class="winner">OpenAIModel(base_url=...) — any endpoint</td>
                     <td class="loser">Need langchain_openai or langchain_anthropic wrapper</td>
                 </tr>
                 <tr class="highlight">
@@ -462,13 +462,13 @@ result = app.invoke({<span class="string">"messages"</span>: [...]})</pre>
         <div class="prose" style="margin-top: 32px;">
             <strong>Key advantages of Strands for MailPilot:</strong>
             <ul>
-                <li><strong>80% less boilerplate</strong> â€” Each agent is literally: model + prompt + tools. No graph definition, no state schema, no edge routing.</li>
-                <li><strong>Model-driven approach</strong> â€” The LLM decides when to call tools and what to do next. We don't manually code the logic flow â€” the AI handles it.</li>
-                <li><strong>Direct tool calling</strong> â€” The @tool decorator auto-generates the JSON schema from the function signature and docstring. LangGraph needs manual schema definition or Pydantic models.</li>
-                <li><strong>Simple multi-agent</strong> â€” Our orchestrator just calls classify(email), then extract(email), then briefing(). No subgraph nesting, no state channel merging.</li>
-                <li><strong>One dependency</strong> â€” strands-agents includes everything (model providers, tools, agent loop). LangGraph requires 4-5 separate packages.</li>
-                <li><strong>OpenAI-compatible endpoint</strong> â€” We just pass base_url and it works with any endpoint. No provider-specific wrappers needed.</li>
-                <li><strong>Production-ready out of the box</strong> â€” Built-in observability (OpenTelemetry), streaming, retry, and tool execution. LangGraph needs LangSmith, custom callbacks, etc.</li>
+                <li><strong>80% less boilerplate</strong> — Each agent is literally: model + prompt + tools. No graph definition, no state schema, no edge routing.</li>
+                <li><strong>Model-driven approach</strong> — The LLM decides when to call tools and what to do next. We don't manually code the logic flow — the AI handles it.</li>
+                <li><strong>Direct tool calling</strong> — The @tool decorator auto-generates the JSON schema from the function signature and docstring. LangGraph needs manual schema definition or Pydantic models.</li>
+                <li><strong>Simple multi-agent</strong> — Our orchestrator just calls classify(email), then extract(email), then briefing(). No subgraph nesting, no state channel merging.</li>
+                <li><strong>One dependency</strong> — strands-agents includes everything (model providers, tools, agent loop). LangGraph requires 4-5 separate packages.</li>
+                <li><strong>OpenAI-compatible endpoint</strong> — We just pass base_url and it works with any endpoint. No provider-specific wrappers needed.</li>
+                <li><strong>Production-ready out of the box</strong> — Built-in observability (OpenTelemetry), streaming, retry, and tool execution. LangGraph needs LangSmith, custom callbacks, etc.</li>
             </ul>
         </div>
 
@@ -480,7 +480,7 @@ result = app.invoke({<span class="string">"messages"</span>: [...]})</pre>
                 <li>Long-running workflows that need checkpoint/resume</li>
                 <li>When you need explicit control over every decision branch</li>
             </ul>
-            <p style="margin-top: 12px;"><strong>For MailPilot:</strong> Our pipeline is linear (classify â†’ extract â†’ store â†’ brief). Strands' simplicity is a perfect fit. We'd be fighting LangGraph's complexity for no benefit.</p>
+            <p style="margin-top: 12px;"><strong>For MailPilot:</strong> Our pipeline is linear (classify → extract → store → brief). Strands' simplicity is a perfect fit. We'd be fighting LangGraph's complexity for no benefit.</p>
         </div>
     </div>
 
@@ -510,8 +510,8 @@ result = app.invoke({<span class="string">"messages"</span>: [...]})</pre>
     </div>
 
     <div class="footer">
-        <p><strong>MailPilot</strong> â€” the organization AI Innovation</p>
-        <p style="margin-top: 4px;">Strands Agents SDK â€¢ FastAPI â€¢ Claude Sonnet â€¢ Tailwind CSS</p>
+        <p><strong>MailPilot</strong> — the organization AI Innovation</p>
+        <p style="margin-top: 4px;">Strands Agents SDK • FastAPI • Claude Sonnet • Tailwind CSS</p>
     </div>
 </div>
 </body>
